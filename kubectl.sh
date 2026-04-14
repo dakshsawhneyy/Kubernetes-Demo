@@ -49,3 +49,6 @@ kubectl get deployments
 
 🔹 10. Autoscaling (Concept)
 kubectl autoscale deployment myapp --cpu-percent=50 --min=1 --max=5
+kubectl get hpa
+
+Stress Container: kubectl run stress --image=polinux/stress -- stress --cpu 2 --timeout 300
