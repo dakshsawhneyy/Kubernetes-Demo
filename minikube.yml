@@ -1,4 +1,4 @@
-minikube start --driver=docker --vm=true 
+minikube start --driver=docker
 minikube status
 
 minikube stop
