@@ -6,6 +6,7 @@ minikube status
 minikube stop
 minikube delete
 
+minikube docker-env
 eval $(minikube docker-env)
 
 #################################################
