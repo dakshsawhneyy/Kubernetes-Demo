@@ -1,1 +1,129 @@
+minikube start --driver=docker --vm=true 
+minikube status
+
+minikube stop
+minikube delete
+
+#################################################
+# Dockerfile
+FROM node:18 AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY app.js app.js
+
+# Stage 2: Production
+FROM node:18-alpine
+WORKDIR /app
+
+COPY --from=builder /app /app
+
+# Creating a non root user
+RUN addgroup appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+# Running the Application
+CMD ["node", "app.js"]
+
+############### Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: myapp
+  labels:
+    name: myapp
+
+
+############# Deployment
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  namespace: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp-container
+        image: dakshsawhneyy/jenkinsnodeapp:v1.0
+        ports:
+          - containerPort: 3000
+
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+  namespace: nginx
+spec:
+  type: ClusterIP
+  selector:
+    app: myapp
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+
+
+################################# Replica Set
+kind: ReplicaSet
+apiVersion: apps/v1
+metadata:
+  name: nginx-replicasets
+  namespace: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+
+  template:
+    metadata:
+      name: nginx-rep-pod
+      labels:
+        app: nginx
+
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+
+################################### Daemon Sets
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: nginx-daemonsets
+  namespace: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+
+  template:
+    metadata:
+      name: nginx-dmn-pod
+      labels:
+        app: nginx
+
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
 
