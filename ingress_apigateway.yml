@@ -1,7 +1,76 @@
+# Dockerfile
+FROM node:18 AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY app.js app.js
+
+# Stage 2: Production
+FROM node:18-alpine
+WORKDIR /app
+
+COPY --from=builder /app /app
+
+# Creating a non root user
+RUN addgroup appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+# Running the Application
+CMD ["node", "app.js"]
+
+
+# ----------------------------------------------
+
+
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  namespace: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp-container
+        image: dakshsawhneyy/jenkinsnodeapp:v1.0
+        ports:
+          - containerPort: 3000
+---
+
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+  namespace: nginx
+spec:
+  type: ClusterIP
+  selector:
+    app: myapp
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+
+
+###########################################
+# Ingress
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nginx-notes-ingress
+  name: nginx-myapp-ingress
   namespace: nginx
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
@@ -20,6 +89,6 @@ spec:
         path: /
         backend:
           service:
-            name: notes-app-service
+            name: myapp-service
             port: 
-              number: 8000
+              number: 3000
