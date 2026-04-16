@@ -1,4 +1,6 @@
 minikube start --driver=docker
+minikube start --nodes=3 --driver=docker
+
 minikube status
 
 minikube stop
