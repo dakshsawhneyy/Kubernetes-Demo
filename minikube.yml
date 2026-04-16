@@ -6,6 +6,8 @@ minikube status
 minikube stop
 minikube delete
 
+eval $(minikube docker-env)
+
 #################################################
 # Dockerfile
 FROM node:18 AS builder
