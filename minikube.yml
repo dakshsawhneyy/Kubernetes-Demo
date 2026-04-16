@@ -221,6 +221,9 @@ spec:
       storage: 1Gi
   storageClassName: local-storage
 
+
+minikube addons enable ingress
+
 ###########################################
 # Ingress
 
@@ -249,3 +252,8 @@ spec:
             name: myapp-service
             port: 
               number: 3000
+
+minikube ip
+
+curl http://ip/
+curl http://ip/nginx
