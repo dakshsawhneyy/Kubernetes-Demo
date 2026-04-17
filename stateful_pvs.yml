@@ -68,6 +68,19 @@ spec:
           persistentVolumeClaim:
             claimName: local-pvc
 
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: ClusterIP
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
 ############## Stateful Sets ############
 kind: StatefulSet
 apiVersion: apps/v1
