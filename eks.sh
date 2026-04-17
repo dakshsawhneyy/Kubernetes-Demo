@@ -50,3 +50,41 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n ku
 
 
 kubectl get deployment -n kube-system aws-load-balancer-controller
+kubectl get pods -n kube-system
+
+----
+# Deploy my own application
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  namespace: game-2048
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: dakshsawhneyy/mynodeapp:latest
+        ports:
+        - containerPort: 3000
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: myapp-svc
+  namespace: game-2048
+spec:
+  selector:
+    app: myapp
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+
