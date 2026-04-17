@@ -47,3 +47,6 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n ku
   --set serviceAccount.name=aws-load-balancer-controller \
   --set region=<your-region> \
   --set vpcId=<your-vpc-id>
+
+
+kubectl get deployment -n kube-system aws-load-balancer-controller
