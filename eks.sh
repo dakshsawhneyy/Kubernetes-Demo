@@ -69,6 +69,7 @@ spec:
       labels:
         app: myapp
     spec:
+      type: ClusterIP
       containers:
       - name: myapp
         image: dakshsawhneyy/mynodeapp:latest
