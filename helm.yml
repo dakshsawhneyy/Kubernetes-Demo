@@ -1,0 +1,13 @@
+ kind get clusters
+ kubectl config get-contexts
+
+
+sudo apt install nginx
+archive.ubuntu.com
+
+# Add bitnami repo
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm search repo bitnami
+helm search repo bitnami | grep nginx
+
+helm install my-nginx bitnami/nginx
