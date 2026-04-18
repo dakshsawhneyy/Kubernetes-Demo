@@ -1,0 +1,86 @@
+############## Stateful Sets ############
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: mysql-statefulset
+  namespace: mysql
+
+spec:
+  serviceName: mysql-service
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MY_SQL_ROOT_PASSWORD
+          value: root
+        - name: MYSQL_DATABASE
+          value: devops
+      volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+
+##### Service -- Headless Service
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  clusterIP: None
+  selector:
+    app: mysql
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+
+# Config Maps
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: mysql-config-map
+  namespace: mysql
+data:
+  MYSQL_DATABASE: devops
+
+- name: MYSQL_DATABASE
+  valueFrom:
+    configMapKeyRef:
+      name: mysql-config-map
+      key: MYSQL_DATABASE 
+
+# Secrets
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secret
+  namespace: mysql
+data:
+  MYSQL_ROOT_PASSWORD: cm9vdAo=  # base64 encoded for "root"
+
+- name: MYSQL_ROOT_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: mysql-secret
+      key: MYSQL_ROOT_PASSWORD
