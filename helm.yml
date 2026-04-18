@@ -10,4 +10,15 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm search repo bitnami
 helm search repo bitnami | grep nginx
 
+helm repo list
+helm repo update
+
 helm install my-nginx bitnami/nginx
+
+######### Charts
+mkdir -p helm-repo/{payments,shipping}
+cd helm-repo
+
+helm create payments
+helm create shipping
+
