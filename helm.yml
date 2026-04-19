@@ -33,6 +33,7 @@ helm install prd-apache apache-helm -n prd-apache --create-namespace
 # Update Replicas -- 2
 # Update Chart appVersion 
 
+helm template flask-app-chart 
 helm package apache-helm
 helm upgrade prd-apache apache-helm -n prd-apache
 
