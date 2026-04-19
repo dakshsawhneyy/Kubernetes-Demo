@@ -84,3 +84,93 @@ data:
     secretKeyRef:
       name: mysql-secret
       key: MYSQL_ROOT_PASSWORD
+
+
+############# Postgres
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-statefulset
+  namespace: postgres
+spec:
+  serviceName: postgres-service
+  replicas: 3
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        ports:
+        - containerPort: 5432
+
+        env:
+        - name: POSTGRES_DB
+          value: devops
+
+        - name: POSTGRES_PASSWORD
+          value: root
+
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+
+# Headless Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: postgres
+spec:
+  clusterIP: None
+  selector:
+    app: postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
+
+# Config Map
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config-map
+  namespace: postgres
+data:
+  POSTGRES_DB: devops
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secret
+  namespace: postgres
+type: Opaque
+data:
+  POSTGRES_PASSWORD: cm9vdA==   # base64 for "root"
+
+
+# using in code
+- name: POSTGRES_DB
+  valueFrom:
+    configMapKeyRef:
+      name: postgres-config-map
+      key: POSTGRES_DB
+
+- name: POSTGRES_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: postgres-secret
+      key: POSTGRES_PASSWORD
