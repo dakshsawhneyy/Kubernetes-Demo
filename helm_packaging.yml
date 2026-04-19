@@ -87,6 +87,8 @@ helm package flask-app-chart
 
 
 # Create Table
+use devops; 
+
 CREATE TABLE messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     message TEXT
