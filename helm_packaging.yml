@@ -75,6 +75,9 @@ MYSQL_DB=your_database
 
 #### Service -- 
 type: NodePort
-port: 80
+port: 5000
 targetPort: 5000
 nodePort: 30007
+
+
+### Remove liveness and readiness probe
