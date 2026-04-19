@@ -1,7 +1,7 @@
- kind get clusters
- kubectl config get-contexts
+kind get clusters
+kubectl config get-contexts
 
-
+# PAckage Manager for Ubuntu
 sudo apt install nginx
 archive.ubuntu.com
 
@@ -14,6 +14,17 @@ helm repo list
 helm repo update
 
 helm install my-nginx bitnami/nginx
+
+##### TWS
+helm create apache-helm
+
+# Inside values
+image: httpd
+
+# PAckage Chart
+helm package .
+
+
 
 ######### Charts
 mkdir -p helm-repo/{payments,shipping}
