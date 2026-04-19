@@ -22,7 +22,7 @@ helm create apache-helm
 image: httpd
 
 # PAckage Chart
-helm package .
+helm package apache-helm
 helm install dev-apache apache-helm
 helm uninstall dev-apache
 
