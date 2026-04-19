@@ -26,19 +26,70 @@ helm package .
 helm install dev-apache apache-helm
 helm uninstall dev-apache
 
+# making application for different environments
 helm install dev-apache apache-helm -n dev-apache --create-namespace
 helm install prd-apache apache-helm -n prd-apache --create-namespace
 
+# Update Replicas -- 2
+# Update Chart appVersion 
+
+helm package apache-helm
+helm upgrade prd-apache apache-helm -n prd-apache
+
+# Roll Back
+helm rollback prd-apache 1 -n prd-apache
 
 
+#################################### Package Flask [Python] Application
+
+# Creating Application
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Hello from Flask!"
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
 
 
+# Dockerfile
+# Stage 1
+FROM python:3.10 AS builder
+
+# Create an app directory
+WORKDIR /app
+
+COPY requirements.txt .
+# Install Dependencies
+RUN pip install --no-cache-dir -r requirements.txt 
+
+COPY app.py app.py
+
+# Stage 2: Production
+FROM python:3.10-slim
+WORKDIR /app
+
+# Copying the required dependencies
+COPY --from=builder /usr/local /usr/local
+COPY --from=builder /app /app
+
+# Create a non root user
+RUN useradd -m appuser
+USER appuser
+
+# Run the application
+CMD ["python", "app.py"]
 
 
-######### Charts
-mkdir -p helm-repo/{payments,shipping}
-cd helm-repo
+helm create python-app
 
-helm create payments
-helm create shipping
+# Modify Port, targetPort and image 
 
+helm package python-app
+
+# Multi Environment Setup
+helm install dev-python-app python-app -n dev-python --create-namespace
+helm install prd-python-app python-app -n prd-python --create-namespace
