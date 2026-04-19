@@ -27,6 +27,12 @@ helm install dev-apache apache-helm
 helm uninstall dev-apache
 
 helm install dev-apache apache-helm -n dev-apache --create-namespace
+helm install prd-apache apache-helm -n prd-apache --create-namespace
+
+
+
+
+
 
 
 ######### Charts
