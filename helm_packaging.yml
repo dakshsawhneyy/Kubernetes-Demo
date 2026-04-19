@@ -84,3 +84,10 @@ nodePort: 30007
 
 helm template flask-app-chart 
 helm package flask-app-chart
+
+
+# Create Table
+CREATE TABLE messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    message TEXT
+);
