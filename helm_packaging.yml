@@ -1,0 +1,80 @@
+# Add bitnami repo
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm search repo bitnami
+helm search repo bitnami | grep nginx
+
+helm repo list
+helm repo update
+
+# Packaging Two Tier Application
+helm create my-sql
+
+# Add Env Vars 
+spec:
+  containers:
+  - name: mysql
+    image: mysql:8.0
+    ports:
+    - containerPort: 3306
+    env:
+    - name: MY_SQL_ROOT_PASSWORD
+      value: root
+    - name: MYSQL_DATABASE
+      value: devops
+    - name: MYSQL_USER
+      value: admin
+    - name: MYSQL_PASSWORD
+      value: admin
+    volumeMounts:
+      - name: mysql-data
+        mountPath: /var/lib/mysql
+
+# Inside Values
+env:
+  MY_SQL_ROOT_PASSWORD: root
+  MYSQL_DATABASE: devops
+  MYSQL_USER: admin
+  MYSQL_PASSWORD: admin
+
+
+################# Package Flask Application
+
+# Dockerfile
+FROM python:3.10 AS builder
+
+# Create an app directory
+WORKDIR /app
+
+COPY requirements.txt .
+# Install Dependencies
+RUN pip install --no-cache-dir -r requirements.txt 
+
+COPY app.py app.py
+
+# Stage 2: Production
+FROM python:3.10-slim
+WORKDIR /app
+
+# Copying the required dependencies
+COPY --from=builder /usr/local /usr/local
+COPY --from=builder /app /app
+
+# Create a non root user
+RUN useradd -m appuser
+USER appuser
+
+# Run the application
+CMD ["python", "app.py"]
+
+
+### Application ENV
+MYSQL_HOST=mysql
+MYSQL_USER=your_username
+MYSQL_PASSWORD=your_password
+MYSQL_DB=your_database
+
+#### Service -- 
+type: NodePort
+port: 80
+targetPort: 5000
+nodePort: 30007
