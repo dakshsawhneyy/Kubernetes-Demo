@@ -81,3 +81,6 @@ nodePort: 30007
 
 
 ### Remove liveness and readiness probe
+
+helm template flask-app-chart 
+helm package flask-app-chart
