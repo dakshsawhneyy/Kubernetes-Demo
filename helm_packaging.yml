@@ -36,6 +36,7 @@ env:
   MYSQL_USER: admin
   MYSQL_PASSWORD: admin
 
+# Modify Port, targetPort and image 
 
 ################# Package Flask Application
 
