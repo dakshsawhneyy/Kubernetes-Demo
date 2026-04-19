@@ -93,3 +93,5 @@ helm package python-app
 # Multi Environment Setup
 helm install dev-python-app python-app -n dev-python --create-namespace
 helm install prd-python-app python-app -n prd-python --create-namespace
+
+# Expose Port
