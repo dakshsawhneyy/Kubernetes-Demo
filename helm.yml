@@ -23,7 +23,10 @@ image: httpd
 
 # PAckage Chart
 helm package .
+helm install dev-apache apache-helm
+helm uninstall dev-apache
 
+helm install dev-apache apache-helm -n dev-apache --create-namespace
 
 
 ######### Charts
