@@ -174,3 +174,8 @@ data:
     secretKeyRef:
       name: postgres-secret
       key: POSTGRES_PASSWORD
+
+
+# Commands
+psql -U postgres
+psql -U postgres -d devops
