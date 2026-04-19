@@ -26,9 +26,9 @@ spec:
           value: root
         - name: MYSQL_DATABASE
           value: devops
-      volumeMounts:
-        - name: mysql-data
-          mountPath: /var/lib/mysql
+        volumeMounts:
+          - name: mysql-data
+            mountPath: /var/lib/mysql
 
   volumeClaimTemplates:
   - metadata:
