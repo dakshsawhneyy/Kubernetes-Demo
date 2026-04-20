@@ -94,3 +94,57 @@ CREATE TABLE messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     message TEXT
 );
+
+
+################ Package NodeJS App
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+    res.send('Hello from Express!');
+});
+
+app.listen(3000, () => {
+    console.log('Server running on port 3000');
+});
+
+
+# Stage 1: Build
+FROM node:18 AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY app.js app.js
+
+# Stage 2: Production
+FROM node:18-alpine
+WORKDIR /app
+
+COPY --from=builder /app /app
+
+# Creating a non root user
+RUN addgroup appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+# Running the Application
+CMD ["node", "app.js"]
+
+# Create chart
+helm create python-app
+
+# Modify Port, targetPort and image 
+
+helm package python-app
+
+# Multi Environment Setup
+helm install dev-python-app python-app -n dev-python --create-namespace
+helm install prd-python-app python-app -n prd-python --create-namespace
+
+# Expose Port
+
+
+################################ Artifact Hub
+helm artifact hub
